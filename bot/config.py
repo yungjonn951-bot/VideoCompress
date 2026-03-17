@@ -10,7 +10,7 @@ class Config(object):
     # get a token from @BotFather
     TG_BOT_TOKEN = get_config("TG_BOT_TOKEN", "")
     # The Telegram API things
-    APP_ID = int(get_config("APP_ID", 12345))
+    API_ID = int(get_config("API_ID", 12345))
     API_HASH = get_config("API_HASH", "")
     LOG_CHANNEL = get_config("LOG_CHANNEL")
     UPDATES_CHANNEL = get_config("UPDATES_CHANNEL", None) # Without `@` LOL
