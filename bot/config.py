@@ -1,47 +1,46 @@
-# (c) @AbirHasan2005
+import os
+import logging
+from pyrogram import Client, idle
+from bot.config import Config
 
-from bot.get_cfg import get_config
+# --- 1. SETUP LOGGING ---
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
+logger = logging.getLogger(__name__)
 
-class Config(object):
-    # You can keep this default
-    SESSION_NAME = get_config("SESSION_NAME", "AHCompressorBot")
-    # Put MongoDB URL
-    DATABASE_URL = get_config("DATABASE_URL", "")
-        # get a token from @BotFather
-    TG_BOT_TOKEN = get_config("TG_BOT_TOKEN", "")
+# --- 2. INITIALIZE THE CLIENT ---
+# We use in_memory=True to avoid disk permission errors on Render
+app = Client(
+    "VideoCompressorBot",
+    api_id=Config.API_ID,
+    api_hash=Config.API_HASH,
+    bot_token=Config.TG_BOT_TOKEN,
+    plugins=dict(root="bot/plugins"),
+    in_memory=True 
+)
 
-    # The Telegram API things
-    # Ensure these are read as the correct types
-    API_ID = int(get_config("API_ID", 12345))
-    API_HASH = get_config("API_HASH", "")
+async def start_bot():
+    try:
+        logger.info("🚀 Attempting to start the bot...")
+        await app.start()
+        
+        # This clears old messages so the bot doesn't crash on backlogs
+        await app.get_updates(offset=-1)
+        
+        me = await app.get_me()
+        logger.info(f"✅ Bot is Online: @{me.username}")
+        
+        # This keeps the bot running until you manually stop it
+        await idle()
+        
+    except Exception as e:
+        logger.error(f"❌ Critical Startup Error: {e}")
+    finally:
+        await app.stop()
+        logger.info("🛑 Bot has stopped.")
 
-    LOG_CHANNEL = get_config("LOG_CHANNEL")
-    UPDATES_CHANNEL = get_config("UPDATES_CHANNEL", None) # Without `@` LOL
-     # Get these values from my.telegram.org
-    # array to store the channel ID who are authorized to use the bot
-    AUTH_USERS = set(
-        int(x) for x in get_config(
-            "AUTH_USERS",
-            should_prompt=True
-        ).split()
-    )
-    # the download location, where the HTTP Server runs
-    DOWNLOAD_LOCATION = get_config("DOWNLOAD_LOCATION", "/app/downloads")
-    # Telegram maximum file upload size
-    BOT_USERNAME = get_config("BOT_USERNAME", "")
-    MAX_FILE_SIZE = 2097152000
-    TG_MAX_FILE_SIZE = 2097152000
-    FREE_USER_MAX_FILE_SIZE = 2097152000
-    # default thumbnail to be used in the videos
-    DEF_THUMB_NAIL_VID_S = get_config("DEF_THUMB_NAIL_VID_S", "https://placehold.it/90x90")
-    # proxy for accessing youtube-dl in GeoRestricted Areas
-    # Get your own proxy from https://github.com/rg3/youtube-dl/issues/1091#issuecomment-230163061
-    HTTP_PROXY = get_config("HTTP_PROXY", None)
-    # maximum message length in Telegram
-    MAX_MESSAGE_LENGTH = 4096
-    # add config vars for the display progress
-    FINISHED_PROGRESS_STR = get_config("FINISHED_PROGRESS_STR", "▓")
-    UN_FINISHED_PROGRESS_STR = get_config("UN_FINISHED_PROGRESS_STR", "░")
-    LOG_FILE_ZZGEVC = get_config("LOG_FILE_ZZGEVC", "Log.txt")
-      # because, https://t.me/c/1494623325/5603
-    SHOULD_USE_BUTTONS = get_config("SHOULD_USE_BUTTONS", False)
+if __name__ == "__main__":
+    # This runs the main function
+    app.run(start_bot())
