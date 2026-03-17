@@ -8,7 +8,7 @@ class Config(object):
     # Put MongoDB URL
     DATABASE_URL = get_config("DATABASE_URL", "")
         # get a token from @BotFather
-    TG_BOT_TOKEN = get_config("BOT_TOKEN", "")
+    TG_BOT_TOKEN = get_config("TG_BOT_TOKEN", "")
 
     # The Telegram API things
     # Ensure these are read as the correct types
