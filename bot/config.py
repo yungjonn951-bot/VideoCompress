@@ -7,12 +7,12 @@ class Config(object):
     SESSION_NAME = get_config("SESSION_NAME", "AHCompressorBot")
     # Put MongoDB URL
     DATABASE_URL = get_config("DATABASE_URL", "")
-    # get a token from @BotFather
         # get a token from @BotFather
     TG_BOT_TOKEN = get_config("BOT_TOKEN", "")
 
     # The Telegram API things
-    API_ID = int(get_config("API_ID", "12345"))
+    # Ensure these are read as the correct types
+    API_ID = int(get_config("API_ID", 12345))
     API_HASH = get_config("API_HASH", "")
 
     LOG_CHANNEL = get_config("LOG_CHANNEL")
