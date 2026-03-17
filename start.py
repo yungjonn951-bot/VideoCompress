@@ -7,7 +7,7 @@ from flask import Flask
 from threading import Thread
 from pymongo import MongoClient
 
-# --- 1. SYSTEM DIAGNOSTICS & LOGGING ---
+# --- 1. SYSTEM DIAGNOSTICS ---
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -15,7 +15,7 @@ logging.basicConfig(
 logger = logging.getLogger("MasterWrapper")
 
 logger.info(f"🐍 Python: {platform.python_version()}")
-logger.info(f"🌍 DC: {os.getenv('TG_DC', 'Auto')} | Env: {os.getenv('ENV', 'Prod')}")
+logger.info(f"📺 Log Channel ID: {os.getenv('LOG_CHANNEL', 'Not Set')}")
 
 # --- 2. DOWNLOADS & AUTO-CLEANUP ---
 DOWNLOAD_DIR = os.getenv("DOWNLOAD_LOCATION", "./downloads")
@@ -23,13 +23,11 @@ DOWNLOAD_DIR = os.getenv("DOWNLOAD_LOCATION", "./downloads")
 def cleanup_downloads():
     if os.path.exists(DOWNLOAD_DIR):
         try:
-            # This wipes the folder clean on every fresh start
             shutil.rmtree(DOWNLOAD_DIR)
-            logger.info("🧹 Cleaned up old downloads to save disk space.")
+            logger.info("🧹 Disk Space: Old downloads cleared.")
         except Exception as e:
             logger.error(f"❌ Cleanup failed: {e}")
     os.makedirs(DOWNLOAD_DIR, exist_ok=True)
-    logger.info(f"📁 Download Directory Ready: {DOWNLOAD_DIR}")
 
 cleanup_downloads()
 
@@ -37,7 +35,7 @@ cleanup_downloads()
 app = Flask('')
 @app.route('/')
 def home():
-    return "<b>Bot Engine:</b> Online<br><b>Disk:</b> Cleaned<br><b>DB:</b> Connected"
+    return "<b>Bot Engine:</b> Online<br><b>Logs:</b> Redirected<br><b>DB:</b> Connected"
 
 def run_web_server():
     port = int(os.environ.get("PORT", 8080))
@@ -51,9 +49,9 @@ if MONGO_URL:
     try:
         client = MongoClient(MONGO_URL, serverSelectionTimeoutMS=5000)
         client.admin.command('ping')
-        logger.info("✅ MongoDB Connected Successfully")
+        logger.info("✅ MongoDB: Connected")
     except Exception as e:
-        logger.error(f"❌ MongoDB Failed: {e}")
+        logger.error(f"❌ MongoDB: Failed ({e})")
 
 # --- 5. LAUNCH BOT ENGINE ---
 sys.path.append(os.getcwd())
@@ -64,5 +62,5 @@ except Exception as e:
     logger.error(f"❌ Critical Startup Error: {e}")
 
 if __name__ == "__main__":
-    # Keeps main thread alive
     pass
+
