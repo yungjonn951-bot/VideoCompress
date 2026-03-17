@@ -14,17 +14,18 @@ logging.basicConfig(
 )
 logger = logging.getLogger("MasterWrapper")
 
+# Diagnostic Prints
 logger.info(f"🐍 Python: {platform.python_version()}")
-logger.info(f"📺 Log Channel ID: {os.getenv('LOG_CHANNEL', 'Not Set')}")
+logger.info(f"👑 Owner ID: {os.getenv('OWNER_ID', 'Not Set')}")
+logger.info(f"📺 Log Channel: {os.getenv('LOG_CHANNEL', 'Not Set')}")
 
 # --- 2. DOWNLOADS & AUTO-CLEANUP ---
 DOWNLOAD_DIR = os.getenv("DOWNLOAD_LOCATION", "./downloads")
-
 def cleanup_downloads():
     if os.path.exists(DOWNLOAD_DIR):
         try:
             shutil.rmtree(DOWNLOAD_DIR)
-            logger.info("🧹 Disk Space: Old downloads cleared.")
+            logger.info("🧹 Disk Space: Cleared old files.")
         except Exception as e:
             logger.error(f"❌ Cleanup failed: {e}")
     os.makedirs(DOWNLOAD_DIR, exist_ok=True)
@@ -35,7 +36,7 @@ cleanup_downloads()
 app = Flask('')
 @app.route('/')
 def home():
-    return "<b>Bot Engine:</b> Online<br><b>Logs:</b> Redirected<br><b>DB:</b> Connected"
+    return "<b>Bot Engine:</b> Online<br><b>Owner:</b> Identified<br><b>DB:</b> Connected"
 
 def run_web_server():
     port = int(os.environ.get("PORT", 8080))
@@ -63,4 +64,5 @@ except Exception as e:
 
 if __name__ == "__main__":
     pass
+
 
