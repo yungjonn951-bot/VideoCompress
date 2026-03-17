@@ -147,4 +147,4 @@ if __name__ == "__main__" :
     app.add_handler(call_back_button_handler)
 
     # run the APPlication
-    app.run()
+    app.run(drop_pending_updates=True)
